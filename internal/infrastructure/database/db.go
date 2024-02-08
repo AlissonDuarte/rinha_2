@@ -19,14 +19,19 @@ type Transacao struct {
 	Tipo      string 
 }
 
-func CreateDb() *gorm.DB {
+func StartConnection() (*gorm.DB, error) {
 	dsn := "rinha:1234@tcp(localhost:3306)/rinha_db?charset=utf8mb4&parseTime=True&loc=Local"
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		panic("Failed to connect to database")
 	}
 
-	err = db.AutoMigrate(&Cliente{}, &Transacao{})
+	return db, err
+}
+
+func Migrate(db *gorm.DB) error{
+
+	err := db.AutoMigrate(&Cliente{}, &Transacao{})
 	if err != nil {
 		fmt.Println(err)
 		panic("Failed to auto migrate database")
@@ -48,5 +53,5 @@ func CreateDb() *gorm.DB {
 		}
 	}
 
-	return db
+	return err
 }
